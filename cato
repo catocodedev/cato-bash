@@ -1,0 +1,101 @@
+#!/bin/bash
+filename="$1"
+option1="$2"
+if [[ $filename == "" ]]; then
+  read filename
+fi
+if [[ $option1 == "-debug" ]]; then
+  debug=$"true"
+else
+  debug=$"false"
+fi
+if [[ $option1 == "-min" ]]; then
+  mode=$"min"
+else
+  mode=$"reg"
+fi
+declare -a lines
+declare -a colors
+declare -a catoponets
+declare -a catos
+declare -a kitname
+declare -a kitdata
+# add colors!
+syscolor=$"\e[1;36m"
+colors+=("\e[0m"); #1 or default
+colors+=("\e[0;30m"); #2 or black
+colors+=("\e[0;31m"); #2 or red
+colors+=("\e[0;33m"); #3 or yellow
+colors+=("\e[0;32m"); #4 or green
+colors+=("\e[0;32m"); #5 or purple
+colors+=("\e[0;34m"); #6 or blue
+declare -i color
+color=$"1"
+version=$"Dev0.1.0-pre"
+sed -i "s/^Version:.*/Version: $version/" ./catoponets/project.catofig
+CONPON=./catoponets/catoponets.catofig
+PROG=./catoponets/project.catofig
+if [ -d "./catoponets" ]; then
+if [ -f "$CONPON" ]; then
+    echo "cato project ready to deploy"
+    timestamp=`date`
+    echo "project prepared @ $timestamp" >> ./catoponets/log.catd
+else 
+    error=$"Catoponet file not found!";
+    timestamp=`date`
+    echo "project failed @ $timestamp Reason: $error" >> ./catoponets/log.catd
+    echo $error
+fi
+else
+  ./pur init $filename $version
+fi
+error=$"No errors code executed!";
+if [[ $filename == *".cato"* ]]; then
+if test -f "$filename"; then
+  if [[ $mode == "reg" ]]; then
+      echo -e "${syscolor}Preparing $filename . . ."
+      dblog=$"Preping $filename for runtime"
+    fi
+    while IFS= read -r line
+    do
+      lines+=("$line");
+    done < "$filename";
+    lines+=("$line");
+    foo=0
+    while [ $foo < $lines]; do
+    
+    foo=$(( $foo + 1 ))
+    done
+  else
+    error=$"${syscolor}This file doesn't exsit"
+    timestamp=`date`
+    echo "project failed @ $timestamp Reason: $error" >> ./catoponets/log.catd
+    echo -e "${syscolor}$error"
+    sleep 2
+    exit;  
+  fi
+  else
+   error=$"${syscolor}This file is not a cato script file"
+    echo -e "${syscolor}$error"
+    sleep 2
+    exit; 
+fi
+
+#code to interput the cato file
+
+if [[ $debug == "true" ]]; then
+  echo -e "${syscolor}$error"
+  echo -e "${syscolor}Debug Log!"
+  echo -e "${syscolor}$dblog"
+  echo -e "${syscolor}$filename has finshed running!"
+  timestamp=`date`
+  echo "debug log for $timestamp | $dblog" >> ./catoponets/log.catd
+else
+  error="${syscolor}$error | Invaild debug vaule set"
+fi
+if [[ $mode == "reg" ]]; then
+  echo -e "${syscolor}press enter to end cato session!"
+  read foo
+fi
+timestamp=`date`
+echo "project ran @ $timestamp using CatoScript:$version" >> ./catoponets/log.catd

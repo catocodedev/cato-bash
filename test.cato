@@ -1,0 +1,11 @@
+%run pur get meow-0.1 for the line to work
+catopent.use > "meow-0.1"
+debug.set | True |;
+%to use a kitten you must make it before hand
+kitten > _test_| |{
+    console.write > | "Meow" |;
+}
+% Main is the kitten name and | | would have perams. PS this is a comment
+kitten > _Main_| |{
+    kitten ~ _test_| |;
+}
