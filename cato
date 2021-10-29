@@ -16,7 +16,7 @@ else
 fi
 declare -a lines
 declare -a colors
-declare -a catoponets
+declare -a catoponents
 declare -a catos
 declare -a kitname
 declare -a kitdata
@@ -32,18 +32,18 @@ colors+=("\e[0;34m"); #6 or blue
 declare -i color
 color=$"1"
 version=$"Dev0.1.0-pre"
-sed -i "s/^Version:.*/Version: $version/" ./catoponets/project.catofig
-CONPON=./catoponets/catoponets.catofig
-PROG=./catoponets/project.catofig
-if [ -d "./catoponets" ]; then
+sed -i "s/^Version:.*/Version: $version/" ./catoponents/project.catofig
+CONPON=./catoponents/catoponents.catofig
+PROG=./catoponents/project.catofig
+if [ -d "./catoponents" ]; then
 if [ -f "$CONPON" ]; then
     echo "cato project ready to deploy"
     timestamp=`date`
-    echo "project prepared @ $timestamp" >> ./catoponets/log.catd
+    echo "project prepared @ $timestamp" >> ./catoponents/log.catd
 else 
     error=$"Catoponet file not found!";
     timestamp=`date`
-    echo "project failed @ $timestamp Reason: $error" >> ./catoponets/log.catd
+    echo "project failed @ $timestamp Reason: $error" >> ./catoponents/log.catd
     echo $error
 fi
 else
@@ -67,14 +67,15 @@ if test -f "$filename"; then
     done < "$filename";
     lines+=("$line");
     foo=0
-    while [ $foo < $lines]; do
-    
+    len=${#lines[@]}
+    while [ $foo < $len ]; do
+    echo "+1"
     foo=$(( $foo + 1 ))
     done
   else
     error=$"${syscolor}This file doesn't exsit"
     timestamp=`date`
-    echo "project failed @ $timestamp Reason: $error" >> ./catoponets/log.catd
+    echo "project failed @ $timestamp Reason: $error" >> ./catoponents/log.catd
     echo -e "${syscolor}$error"
     sleep 2
     exit;  
@@ -94,7 +95,7 @@ if [[ $debug == "true" ]]; then
   echo -e "${syscolor}$dblog"
   echo -e "${syscolor}$filename has finshed running!"
   timestamp=`date`
-  echo "debug log for $timestamp | $dblog" >> ./catoponets/log.catd
+  echo "debug log for $timestamp | $dblog" >> ./catoponents/log.catd
 else
   error="${syscolor}$error | Invaild debug vaule set"
 fi
@@ -103,4 +104,4 @@ if [[ $mode == "reg" ]]; then
   read foo
 fi
 timestamp=`date`
-echo "project ran @ $timestamp using CatoScript:$version" >> ./catoponets/log.catd
+echo "project ran @ $timestamp using CatoScript:$version" >> ./catoponents/log.catd
