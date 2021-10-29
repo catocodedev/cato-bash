@@ -47,7 +47,12 @@ else
     echo $error
 fi
 else
-  ./pur init $filename $version
+  if ./pur; then
+    ./pur init $filename $version
+  else
+    echo "INSTALL PUR! *pur not found"
+    exit;
+  fi
 fi
 error=$"No errors code executed!";
 if [[ $filename == *".cato"* ]]; then
