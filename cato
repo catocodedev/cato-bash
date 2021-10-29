@@ -61,6 +61,7 @@ if test -f "$filename"; then
       echo -e "${syscolor}Preparing $filename . . ."
       dblog=$"Preping $filename for runtime"
     fi
+    mkdir ./catoponents/runtime
     while IFS= read -r line
     do
       lines+=("$line");
@@ -68,9 +69,19 @@ if test -f "$filename"; then
     lines+=("$line");
     foo=0
     len=${#lines[@]}
-    while [ $foo < $len ]; do
-    echo "+1"
+    while [ $foo != $len ]; do
     foo=$(( $foo + 1 ))
+    echo "${lines[$foo]}"
+      if [[ ${lines[$foo]} == *"@kitten"* ]]; then
+        echo "Kitten detected!"
+        kitten=`grep -oP '(?<=<).*?(?=>)' <<< "${lines[$foo]}"`
+        echo $kitten
+        foo=$(( $foo + 1 ))
+        while [[ ${lines[$foo]} != *"}"* ]]; do
+          echo "${lines[$foo]}" >> ./catoponents/runtime/$kitten.catokit
+          foo=$(( $foo + 1 ))
+        done
+      fi
     done
   else
     error=$"${syscolor}This file doesn't exsit"
@@ -87,6 +98,7 @@ if test -f "$filename"; then
     exit; 
 fi
 
+echo -e "${syscolor}Running $filename"
 #code to interput the cato file
 
 if [[ $debug == "true" ]]; then
@@ -105,3 +117,4 @@ if [[ $mode == "reg" ]]; then
 fi
 timestamp=`date`
 echo "project ran @ $timestamp using CatoScript:$version" >> ./catoponents/log.catd
+rm -r ./catoponents/runtime
