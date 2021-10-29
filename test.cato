@@ -1,4 +1,4 @@
 debug.set | True |;
 @kitten <main> | |{
-   console.write | test |;
+   console.write | "test" |;
 };
