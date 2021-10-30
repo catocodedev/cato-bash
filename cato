@@ -39,7 +39,6 @@ if [ -d "./catoponents" ]; then
 if [ -f "$CONPON" ]; then
     tmp=`sed -n '3p' $PROG`
     mainkit=`grep -oP '(?<=:).*?(?=>)' <<< "$tmp"`
-    echo $mainkit
     echo "cato project ready to deploy"
     timestamp=`date`
     echo "project prepared @ $timestamp" >> ./catoponents/log.catd
@@ -59,12 +58,13 @@ else
 fi
 error=$"No errors code executed!";
 if [[ $filename == *".cato"* ]]; then
+    mkdir ./catoponents/runtime
 if test -f "$filename"; then
   if [[ $mode == "reg" ]]; then
       echo -e "${syscolor}Preparing $filename . . ."
-      dblog=$"Preping $filename for runtime"
+      echo "Runnig CatoScript version $version" >> ./catoponents/runtime/debuglog.catd
+      echo "Preping $filename for runtime" >> ./catoponents/runtime/debuglog.catd
     fi
-    mkdir ./catoponents/runtime
     while IFS= read -r line
     do
       lines+=("$line");
@@ -74,16 +74,15 @@ if test -f "$filename"; then
     len=${#lines[@]}
     while [ $foo != $len ]; do
     foo=$(( $foo + 1 ))
-    echo "${lines[$foo]}"
       if [[ ${lines[$foo]} == *"@kitten"* ]]; then
-        echo "Kitten detected!"
         kitten=`grep -oP '(?<=<).*?(?=>)' <<< "${lines[$foo]}"`
-        echo $kitten
         foo=$(( $foo + 1 ))
+        
         while [[ ${lines[$foo]} != *"}"* ]]; do
           echo "${lines[$foo]}" >> ./catoponents/runtime/$kitten.catokit
           foo=$(( $foo + 1 ))
         done
+        echo "Class $kitten created" >> ./catoponents/runtime/debuglog.catd
       fi
     done
   else
@@ -108,14 +107,32 @@ while IFS= read -r line
       catlines+=("$line");
     done < "./catoponents/runtime/$mainkit.catokit";
     catlines+=("$line");
-
+    acvlines=${#catlines[@]}
+    declare -i ll
+    ll=`expr $acvlines+1`
+    foo=0
+while [[ $foo != $ll ]]; do
+  if [[ ${catlines[$foo]} == *"console.write"* ]]; then
+    tmp=$(echo ${catlines[$foo]} | cut -d'"' -f 2)
+    echo $tmp
+    echo "Echoed $tmp" >> ./catoponents/runtime/debuglog.catd
+  elif [[ ${catlines[$foo]} == *"%"* ]]; then
+    echo "Commented line" >> ./catoponents/runtime/debuglog.catd
+  fi
+  foo=$(( $foo + 1 ))
+done
+#end code
 if [[ $debug == "true" ]]; then
   echo -e "${syscolor}$error"
-  echo -e "${syscolor}Debug Log!"
-  echo -e "${syscolor}$dblog"
   echo -e "${syscolor}$filename has finshed running!"
   timestamp=`date`
   echo "debug log for $timestamp | $dblog" >> ./catoponents/log.catd
+  echo "$foo lines ran" >> ./catoponents/log.catd
+ while IFS= read -r line
+    do
+      echo "$line" >> ./catoponents/log.catd
+    done < "./catoponents/runtime/debuglog.catd";
+     echo -e "${syscolor}Debug Log saved to log file"
 else
   error="${syscolor}$error | Invaild debug vaule set"
 fi
