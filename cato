@@ -37,6 +37,9 @@ CONPON=./catoponents/catoponents.catofig
 PROG=./catoponents/project.catofig
 if [ -d "./catoponents" ]; then
 if [ -f "$CONPON" ]; then
+    tmp=`sed -n '3p' $PROG`
+    mainkit=`grep -oP '(?<=:).*?(?=>)' <<< "$tmp"`
+    echo $mainkit
     echo "cato project ready to deploy"
     timestamp=`date`
     echo "project prepared @ $timestamp" >> ./catoponents/log.catd
@@ -100,6 +103,11 @@ fi
 
 echo -e "${syscolor}Running $filename"
 #code to interput the cato file
+while IFS= read -r line
+    do
+      catlines+=("$line");
+    done < "./catoponents/runtime/$mainkit.catokit";
+    catlines+=("$line");
 
 if [[ $debug == "true" ]]; then
   echo -e "${syscolor}$error"
