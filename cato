@@ -39,7 +39,7 @@ if [ -d "./catoponents" ]; then
 if [ -f "$CONPON" ]; then
     tmp=`sed -n '3p' $PROG`
     mainkit=`grep -oP '(?<=:).*?(?=>)' <<< "$tmp"`
-    echo "cato project ready to deploy"
+    echo "cato project ready to run"
     timestamp=`date`
     echo "project prepared @ $timestamp" >> ./catoponents/log.catd
 else 
@@ -58,7 +58,7 @@ else
 fi
 error=$"No errors code executed!";
 if [[ $filename == *".cato"* ]]; then
-    mkdir ./catoponents/runtime
+  mkdir ./catoponents/runtime
 if test -f "$filename"; then
   if [[ $mode == "reg" ]]; then
       echo -e "${syscolor}Preparing $filename . . ."
@@ -73,17 +73,18 @@ if test -f "$filename"; then
     foo=0
     len=${#lines[@]}
     while [ $foo != $len ]; do
-    foo=$(( $foo + 1 ))
       if [[ ${lines[$foo]} == *"@kitten"* ]]; then
         kitten=`grep -oP '(?<=<).*?(?=>)' <<< "${lines[$foo]}"`
+        echo "kitten found!"
         foo=$(( $foo + 1 ))
-        
         while [[ ${lines[$foo]} != *"}"* ]]; do
+          echo "${lines[$foo]}"
           echo "${lines[$foo]}" >> ./catoponents/runtime/$kitten.catokit
           foo=$(( $foo + 1 ))
         done
         echo "Class $kitten created" >> ./catoponents/runtime/debuglog.catd
       fi
+      foo=$(( $foo + 1 ))
     done
   else
     error=$"${syscolor}This file doesn't exsit"
@@ -111,15 +112,32 @@ while IFS= read -r line
     declare -i ll
     ll=`expr $acvlines+1`
     foo=0
-while [[ $foo != $ll ]]; do
-  if [[ ${catlines[$foo]} == *"console.write"* ]]; then
+if [ -f './catoponents/runtime/$mainkit.catokit' ]; then
+  timestamp=`date`
+  echo "Project Failed @ $timestamp Reason:ERROR-100 Main class $mainkit not found" >> ./catoponents/log.catd
+  echo -e "${colors[2]} ERROR-100! check logs"
+  rm -r ./catoponents/runtime
+  exit;
+fi
+foo=0
+while [[ $foo != $acvlines ]]; do
+  foo=$(( $foo + 1 ))
+  if [[ ${catlines[$foo]} == *"%"* || ${catlines[$foo]} == "" ]]; then
+    echo "Commented line" >> ./catoponents/runtime/debuglog.catd
+  elif [[ ${catlines[$foo]} == *"console.write"* ]]; then
     tmp=$(echo ${catlines[$foo]} | cut -d'"' -f 2)
     echo $tmp
-    echo "Echoed $tmp" >> ./catoponents/runtime/debuglog.catd
-  elif [[ ${catlines[$foo]} == *"%"* ]]; then
-    echo "Commented line" >> ./catoponents/runtime/debuglog.catd
+    echo "Wrote $tmp to console" >> ./catoponents/runtime/debuglog.catd
+  elif [[ ${catlines[$foo]} == *"debug.write"* ]]; then
+    tmp=$(echo ${catlines[$foo]} | cut -d'"' -f 2)
+    echo "$filename | $tmp" >> ./catoponents/runtime/debuglog.catd
+  else
+    foo=$(( $foo + 1 ))
+    echo "Project Failed @ $timestamp Reason:ERROR-101 invaild method on line $foo inside the main class| ${catlines[$foo]}" >> ./catoponents/log.catd
+    echo -e "${colors[2]} ERROR-101! check logs"
+    rm -r ./catoponents/runtime
+    exit;
   fi
-  foo=$(( $foo + 1 ))
 done
 #end code
 if [[ $debug == "true" ]]; then
