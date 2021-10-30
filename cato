@@ -75,10 +75,8 @@ if test -f "$filename"; then
     while [ $foo != $len ]; do
       if [[ ${lines[$foo]} == *"@kitten"* ]]; then
         kitten=`grep -oP '(?<=<).*?(?=>)' <<< "${lines[$foo]}"`
-        echo "kitten found!"
         foo=$(( $foo + 1 ))
         while [[ ${lines[$foo]} != *"}"* ]]; do
-          echo "${lines[$foo]}"
           echo "${lines[$foo]}" >> ./catoponents/runtime/$kitten.catokit
           foo=$(( $foo + 1 ))
         done
@@ -123,14 +121,14 @@ foo=0
 while [[ $foo != $acvlines ]]; do
   foo=$(( $foo + 1 ))
   if [[ ${catlines[$foo]} == *"%"* || ${catlines[$foo]} == "" ]]; then
-    echo "Commented line" >> ./catoponents/runtime/debuglog.catd
+    echo "Commented line / blank line" >> ./catoponents/runtime/debuglog.catd
   elif [[ ${catlines[$foo]} == *"console.write"* ]]; then
     tmp=$(echo ${catlines[$foo]} | cut -d'"' -f 2)
     echo $tmp
     echo "Wrote $tmp to console" >> ./catoponents/runtime/debuglog.catd
-  elif [[ ${catlines[$foo]} == *"debug.write"* ]]; then
+  elif [[ ${catlines[$foo]} == *"log.write"* ]]; then
     tmp=$(echo ${catlines[$foo]} | cut -d'"' -f 2)
-    echo "$filename | $tmp" >> ./catoponents/runtime/debuglog.catd
+    echo "$filename | $tmp" >> ./catoponents/log.catd
   else
     foo=$(( $foo + 1 ))
     echo "Project Failed @ $timestamp Reason:ERROR-101 invaild method on line $foo inside the main class| ${catlines[$foo]}" >> ./catoponents/log.catd

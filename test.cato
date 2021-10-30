@@ -1,5 +1,5 @@
 @kitten <main> | |{
    console.write | "meow" |;
    console.write | "test" |;
-   debug.write | "test debug line" |;
+   log.write | "test debug line" |;
 };
