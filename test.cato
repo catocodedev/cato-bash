@@ -1,5 +1,6 @@
+@import {test}
 @kitten <main> | |{
    console.write | "meow" |;
-   console.write | "test" |;
-   log.write | "test debug line" |;
+   test#
+   log.write | "main class ran ok" |;
 };

@@ -82,6 +82,10 @@ if test -f "$filename"; then
         done
         echo "Class $kitten created" >> ./catoponents/runtime/debuglog.catd
       fi
+      if [[ ${lines[$foo]} == *"@import"* ]]; then
+      import=`grep -oP '(?<={).*?(?=})' <<< "${lines[$foo]}"`
+      catoponents+=$import
+      fi
       foo=$(( $foo + 1 ))
     done
   else
@@ -117,20 +121,39 @@ if [ -f './catoponents/runtime/$mainkit.catokit' ]; then
   rm -r ./catoponents/runtime
   exit;
 fi
-foo=0
+foo=-1
+ranstat=none
 while [[ $foo != $acvlines ]]; do
   foo=$(( $foo + 1 ))
+    len=${#catoponents[@]}
+    for (( i=1; i<$len; i++ ));
+    do
+    if [ -f './catoponents/catos/${catoponents[i]}.catop' ]; then
+    echo "${catoponents[i]} imported!" >> ./catoponents/log.catd
+    else
+    echo -e "${colors[2]}ERROR 201! check logs"
+    timestamp=`date`
+    echo "Project Failed @ $timestamp Reason:ERROR-201 import ${catoponents[i]} failed not found" >> ./catoponents/log.catd
+    rm -r ./catoponents/runtime
+    exit;    
+    fi
+    done
+    source "./catoponents/catos/${catoponents[@]}.catop"
   if [[ ${catlines[$foo]} == *"%"* || ${catlines[$foo]} == "" ]]; then
     echo "Commented line / blank line" >> ./catoponents/runtime/debuglog.catd
+    ranstat=ok
   elif [[ ${catlines[$foo]} == *"console.write"* ]]; then
     tmp=$(echo ${catlines[$foo]} | cut -d'"' -f 2)
     echo $tmp
     echo "Wrote $tmp to console" >> ./catoponents/runtime/debuglog.catd
+    ranstat=ok
   elif [[ ${catlines[$foo]} == *"log.write"* ]]; then
     tmp=$(echo ${catlines[$foo]} | cut -d'"' -f 2)
     echo "$filename | $tmp" >> ./catoponents/log.catd
-  else
-    foo=$(( $foo + 1 ))
+    ranstat=ok
+  fi
+  if [ $ranstat != "ok" ]; then
+   foo=$(( $foo + 1 ))
     echo "Project Failed @ $timestamp Reason:ERROR-101 invaild method on line $foo inside the main class| ${catlines[$foo]}" >> ./catoponents/log.catd
     echo -e "${colors[2]} ERROR-101! check logs"
     rm -r ./catoponents/runtime
