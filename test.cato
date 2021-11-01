@@ -1,8 +1,8 @@
 @import {test}
-@import {meow}
 @kitten <main> | |{
-   test#
-   meow.reg#
-   meow.woke#
-   log.write | "main class ran ok" |;
+   kitten$<test>
+   console.write | "meow" |
 };
+@kitten <test>{
+   test#
+}

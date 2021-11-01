@@ -31,7 +31,7 @@ colors+=("\e[0;32m"); #5 or purple
 colors+=("\e[0;34m"); #6 or blue
 declare -i color
 color=$"1"
-version=$"Dev0.1.0-pre"
+version=$"Dev0.1.0"
 sed -i "s/^Version:.*/Version: $version/" ./catoponents/project.catofig
 CONPON=./catoponents/catoponents.catofig
 PROG=./catoponents/project.catofig
@@ -156,6 +156,21 @@ while [[ $foo != $acvlines ]]; do
     tmp=$(echo ${catlines[$foo]} | cut -d'"' -f 2)
     echo "$filename | $tmp" >> ./catoponents/log.catd
     ranstat=ok
+  elif [[ ${catlines[$foo]} == *"kitten$"* ]]; then
+    kitten=`grep -oP '(?<=<).*?(?=>)' <<< "${catlines[$foo]}"`
+    if [ -f "./catoponents/runtime/$kitten.catokit" ]; then
+    while IFS= read -r line
+    do
+      catlines[($foo+1)]="$line"
+    done < "./catoponents/runtime/$kitten.catokit";
+    lines+=("$line");
+    ranstat=ok
+    else
+    echo "Project Failed @ $timestamp Reason:ERROR-400 class $kitten not found on line $foo inside the main class | ${catlines[$foo]}" >> ./catoponents/log.catd
+    echo -e "${colors[2]} ERROR-400! check logs"
+    rm -r ./catoponents/runtime
+    exit;
+    fi
   fi
   if [ $ranstat != "ok" ]; then
   if [ $ranstat != "error" ]; then
