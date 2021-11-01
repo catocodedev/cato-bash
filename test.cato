@@ -1,6 +1,9 @@
-@import {test}
+@import {math}
+@import {test}}
 @kitten <main> | |{
    console.write | "meow" |;
    test#
+   Math.add(9+10);
+   Math.sub(20-10);
    log.write | "main class ran ok" |;
 };

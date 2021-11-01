@@ -123,12 +123,11 @@ if [ -f './catoponents/runtime/$mainkit.catokit' ]; then
 fi
 foo=-1
 ranstat=none
-while [[ $foo != $acvlines ]]; do
-  foo=$(( $foo + 1 ))
     len=${#catoponents[@]}
-    for (( i=1; i<$len; i++ ));
+    for (( i=0; i<$len; i++ ));
     do
-    if [ -f './catoponents/catos/${catoponents[i]}.catop' ]; then
+    tmp="./catoponents/catos/${catoponents[i]}.catop"
+    if [ -f $tmp ]; then
     echo "${catoponents[i]} imported!" >> ./catoponents/log.catd
     else
     echo -e "${colors[2]}ERROR 201! check logs"
@@ -138,7 +137,13 @@ while [[ $foo != $acvlines ]]; do
     exit;    
     fi
     done
-    source "./catoponents/catos/${catoponents[@]}.catop"
+while [[ $foo != $acvlines ]]; do
+  foo=$(( $foo + 1 ))
+    len=${#catoponents[@]}
+    for (( i=0; i<$len; i++ ));
+    do
+        source "./catoponents/catos/${catoponents[i]}.catop"
+    done
   if [[ ${catlines[$foo]} == *"%"* || ${catlines[$foo]} == "" ]]; then
     echo "Commented line / blank line" >> ./catoponents/runtime/debuglog.catd
     ranstat=ok
@@ -159,6 +164,7 @@ while [[ $foo != $acvlines ]]; do
     rm -r ./catoponents/runtime
     exit;
   fi
+  runstat=null
 done
 #end code
 if [[ $debug == "true" ]]; then
