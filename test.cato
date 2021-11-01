@@ -1,9 +1,8 @@
-@import {math}
-@import {test}}
+@import {test}
+@import {meow}
 @kitten <main> | |{
-   console.write | "meow" |;
    test#
-   Math.add(9+10);
-   Math.sub(20-10);
+   meow.reg#
+   meow.woke#
    log.write | "main class ran ok" |;
 };

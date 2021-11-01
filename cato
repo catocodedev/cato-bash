@@ -84,7 +84,7 @@ if test -f "$filename"; then
       fi
       if [[ ${lines[$foo]} == *"@import"* ]]; then
       import=`grep -oP '(?<={).*?(?=})' <<< "${lines[$foo]}"`
-      catoponents+=$import
+      catoponents+=("$import");
       fi
       foo=$(( $foo + 1 ))
     done
@@ -123,16 +123,16 @@ if [ -f './catoponents/runtime/$mainkit.catokit' ]; then
 fi
 foo=-1
 ranstat=none
-    len=${#catoponents[@]}
+    len=`expr ${#catoponents[@]}`
     for (( i=0; i<$len; i++ ));
     do
-    tmp="./catoponents/catos/${catoponents[i]}.catop"
+    tmp="./catoponents/catos/${catoponents[$i]}.catop"
     if [ -f $tmp ]; then
-    echo "${catoponents[i]} imported!" >> ./catoponents/log.catd
+    echo "${catoponents[$i]} imported!" >> ./catoponents/log.catd
     else
     echo -e "${colors[2]}ERROR 201! check logs"
     timestamp=`date`
-    echo "Project Failed @ $timestamp Reason:ERROR-201 import ${catoponents[i]} failed not found" >> ./catoponents/log.catd
+    echo "Project Failed @ $timestamp Reason:ERROR-201 import ${catoponents[$i]} failed not found" >> ./catoponents/log.catd
     rm -r ./catoponents/runtime
     exit;    
     fi
@@ -142,7 +142,7 @@ while [[ $foo != $acvlines ]]; do
     len=${#catoponents[@]}
     for (( i=0; i<$len; i++ ));
     do
-        source "./catoponents/catos/${catoponents[i]}.catop"
+        source "./catoponents/catos/${catoponents[$i]}.catop"
     done
   if [[ ${catlines[$foo]} == *"%"* || ${catlines[$foo]} == "" ]]; then
     echo "Commented line / blank line" >> ./catoponents/runtime/debuglog.catd
@@ -158,11 +158,16 @@ while [[ $foo != $acvlines ]]; do
     ranstat=ok
   fi
   if [ $ranstat != "ok" ]; then
+  if [ $ranstat != "error" ]; then
    foo=$(( $foo + 1 ))
     echo "Project Failed @ $timestamp Reason:ERROR-101 invaild method on line $foo inside the main class| ${catlines[$foo]}" >> ./catoponents/log.catd
     echo -e "${colors[2]} ERROR-101! check logs"
     rm -r ./catoponents/runtime
     exit;
+  else
+  echo "Project Failed @ $timestamp Reason:ERROR-300 function error on line $foo inside the main class| ${catlines[$foo]}" >> ./catoponents/log.catd
+  echo "$error" >> ./catoponents/log.catd
+  fi
   fi
   runstat=null
 done
