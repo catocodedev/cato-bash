@@ -143,7 +143,7 @@ ranstat=none
     fi
     done
 while [[ $foo != $acvlines ]]; do
-  foo=$(( $foo + 1 ))
+
     len=${#catoponents[@]}
     for (( i=0; i<$len; i++ ));
     do
@@ -172,6 +172,21 @@ while [[ $foo != $acvlines ]]; do
     echo $kitval
     echo "Kit printed $kit" >> ./catoponents/runtime/debuglog.catd
     ranstat=ok
+    elif [[ ${catlines[$foo]} == *"kit.set$"* ]]; then
+    kit=`grep -oP '(?<=<).*?(?=>)' <<< "${catlines[$foo]}"`
+    val=`grep -oP '(?<=").*?(?=")' <<< "${catlines[$foo]}"`
+    index=-1
+    for i in "${!kitname[@]}";
+      do
+      if [[ "${kitname[$i]}" = "${kit}" ]];
+      then
+        index=$i
+        break
+      fi
+    done
+    kitdata[$index]="$val"
+    echo "Kit $kit cahnged to $val" >> ./catoponents/runtime/debuglog.catd
+    ranstat=ok
   elif [[ ${catlines[$foo]} == *"log.write"* ]]; then
     tmp=$(echo ${catlines[$foo]} | cut -d'"' -f 2)
     echo "$filename | $tmp" >> ./catoponents/log.catd
@@ -179,11 +194,14 @@ while [[ $foo != $acvlines ]]; do
   elif [[ ${catlines[$foo]} == *"kitten$"* ]]; then
     kitten=`grep -oP '(?<=<).*?(?=>)' <<< "${catlines[$foo]}"`
     if [ -f "./catoponents/runtime/$kitten.catokit" ]; then
+    tmp=0
     while IFS= read -r line
     do
-      catlines[($foo+1)]="$line"
+      barfoo=`(expr $foo + $tmp)`
+      #make it add in between elements
+      catlines[$barfoo]="$line"
+      tmp=$(( $tmp + 1 ))
     done < "./catoponents/runtime/$kitten.catokit";
-    lines+=("$line");
     ranstat=ok
     else
     echo "Project Failed @ $timestamp Reason:ERROR-400 class $kitten not found on line $foo inside the main class | ${catlines[$foo]}" >> ./catoponents/log.catd
@@ -192,9 +210,10 @@ while [[ $foo != $acvlines ]]; do
     exit;
     fi
   fi
+  foo=$(( $foo + 1 ))
   if [ $ranstat != "ok" ]; then
   if [ $ranstat != "error" ]; then
-   foo=$(( $foo + 1 ))
+   
     echo "Project Failed @ $timestamp Reason:ERROR-101 invaild method on line $foo inside the main class| ${catlines[$foo]}" >> ./catoponents/log.catd
     echo -e "${colors[2]} ERROR-101! check logs"
     rm -r ./catoponents/runtime
