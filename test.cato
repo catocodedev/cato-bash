@@ -1,7 +1,10 @@
 @import {test}
+@kit {e,"mmm e text"}
 @kitten <main> | |{
    kitten$<test>
+
    console.write | "meow" |
+   console.printkit <e>
 };
 @kitten <test>{
    test#
