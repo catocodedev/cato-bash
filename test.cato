@@ -1,12 +1,13 @@
 @import {test}
 @kit {e,"mmm e text"}
 @kit {meow,"M E O W ! C A T"}
-@kitten <main> | |{
-   console.printkit <e>
-   kitten$<test>
-   %fixing bugs to make it insert not replace
-   console.printkit <meow>
-};
 @kitten <test>{
+   
    test#
+   console.write"test2"
 }
+@kitten <main> | |{
+   console.printkit<e>
+   kitten$<test>
+   console.printkit<meow>
+};

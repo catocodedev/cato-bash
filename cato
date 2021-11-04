@@ -31,7 +31,7 @@ colors+=("\e[0;32m"); #5 or purple
 colors+=("\e[0;34m"); #6 or blue
 declare -i color
 color=$"1"
-version=$"Dev0.1.1"
+version=$"Dev0.1.1-patch"
 sed -i "s/^Version:.*/Version: $version/" ./catoponents/project.catofig
 CONPON=./catoponents/catoponents.catofig
 PROG=./catoponents/project.catofig
@@ -131,6 +131,7 @@ ranstat=none
     len=`expr ${#catoponents[@]}`
     for (( i=0; i<$len; i++ ));
     do
+    len=`expr ${#catoponents[@]}`
     tmp="./catoponents/catos/${catoponents[$i]}.catop"
     if [ -f $tmp ]; then
     echo "${catoponents[$i]} imported!" >> ./catoponents/log.catd
@@ -197,11 +198,11 @@ while [[ $foo != $acvlines ]]; do
     tmp=0
     while IFS= read -r line
     do
-      barfoo=`(expr $foo + $tmp)`
-      #make it add in between elements
-      catlines[$barfoo]="$line"
-      tmp=$(( $tmp + 1 ))
+      tmplines+=("$line")
     done < "./catoponents/runtime/$kitten.catokit";
+    tmplines+=("$line")
+    barfoo=$(( $foo  + 1 ))
+    catlines=(${catlines[@]::$foo} ${tmplines[@]} ${catlines[@]:$barfoo:$len})
     ranstat=ok
     else
     echo "Project Failed @ $timestamp Reason:ERROR-400 class $kitten not found on line $foo inside the main class | ${catlines[$foo]}" >> ./catoponents/log.catd
@@ -224,6 +225,7 @@ while [[ $foo != $acvlines ]]; do
   fi
   fi
   runstat=null
+  echo ${catlines[$foo]}
 done
 #end code
 if [[ $debug == "true" ]]; then
