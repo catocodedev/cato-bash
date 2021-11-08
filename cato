@@ -31,7 +31,7 @@ colors+=("\e[0;32m"); #5 or purple
 colors+=("\e[0;34m"); #6 or blue
 declare -i color
 color=$"1"
-version=$"Dev0.1.2"
+version=$"Dev0.1.3"
 sed -i "s/^Version:.*/Version: $version/" ./catoponents/project.catofig
 CONPON=./catoponents/catoponents.catofig
 PROG=./catoponents/project.catofig
@@ -150,7 +150,7 @@ while [[ $foo != $acvlines ]]; do
     do
         source "./catoponents/catos/${catoponents[$i]}.catop"
     done
-  if [[ ${catlines[$foo]} == *"%"* || ${catlines[$foo]} == "" ]]; then
+  if [[ ${catlines[$foo]} == *"%"* || ${catlines[$foo]} == "" || ${catlines[$foo]} == "}" ]]; then
     echo "Commented line / blank line" >> ./catoponents/runtime/debuglog.catd
     ranstat=ok
   elif [[ ${catlines[$foo]} == *"console.write"* ]]; then
@@ -173,6 +173,28 @@ while [[ $foo != $acvlines ]]; do
     echo $kitval
     echo "Kit printed $kit" >> ./catoponents/runtime/debuglog.catd
     ranstat=ok
+    elif [[ ${catlines[$foo]} == *"if"* ]]; then
+	kit=`grep -oP '(?<=<).*?(?=>)' <<< "${catlines[$foo]}"`
+  tmp=$(echo ${catlines[$foo]} | cut -d'"' -f 2)
+    	index=-1
+    	for i in "${!kitname[@]}";
+      	do
+      	if [[ "${kitname[$i]}" = "${kit}" ]];
+      	then
+        	index=$i
+        break
+      fi
+    done
+    kitval=${kitdata[$index]}
+    if [[ $kitval == $tmp ]]; then
+    foo=$(( $foo + 1 ))
+      echo "If was true" >> ./catoponents/log.catd
+    else
+    while [[ ${catlines[$foo]} != *"]"* ]]; do
+          foo=$(( $foo + 1 ))
+        done
+    fi
+      ranstat=ok
     elif [[ ${catlines[$foo]} == *"kit.set$"* ]]; then
     kit=`grep -oP '(?<=<).*?(?=>)' <<< "${catlines[$foo]}"`
     val=`grep -oP '(?<=").*?(?=")' <<< "${catlines[$foo]}"`

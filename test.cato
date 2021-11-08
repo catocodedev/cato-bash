@@ -4,4 +4,8 @@
 kit.readset<e>
 console.write | "Your input was" |
 console.printkit<meow>
-};
+if( <e> = "test" )[
+console.write | "if was true" |
+]
+test#
+}
