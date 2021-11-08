@@ -31,7 +31,7 @@ colors+=("\e[0;32m"); #5 or purple
 colors+=("\e[0;34m"); #6 or blue
 declare -i color
 color=$"1"
-version=$"Dev0.1.1-patch"
+version=$"Dev0.1.2"
 sed -i "s/^Version:.*/Version: $version/" ./catoponents/project.catofig
 CONPON=./catoponents/catoponents.catofig
 PROG=./catoponents/project.catofig
@@ -192,6 +192,22 @@ while [[ $foo != $acvlines ]]; do
     tmp=$(echo ${catlines[$foo]} | cut -d'"' -f 2)
     echo "$filename | $tmp" >> ./catoponents/log.catd
     ranstat=ok
+   elif [[ ${catlines[$foo]} == *"kit.readset"* ]]; then
+    echo "input"
+    kit=`grep -oP '(?<=<).*?(?=>)' <<< "${catlines[$foo]}"`
+    read val
+    index=-1
+    for i in "${!kitname[@]}";
+      do
+      if [[ "${kitname[$i]}" = "${kit}" ]];
+      then
+        index=$i
+        break
+      fi
+    done
+    kitdata[$index]="$val"
+    echo "Kit $kit cahnged to $val" >> ./catoponents/runtime/debuglog.catd
+    ranstat=ok
   elif [[ ${catlines[$foo]} == *"kitten$"* ]]; then
     kitten=`grep -oP '(?<=<).*?(?=>)' <<< "${catlines[$foo]}"`
     if [ -f "./catoponents/runtime/$kitten.catokit" ]; then
@@ -216,6 +232,7 @@ while [[ $foo != $acvlines ]]; do
   if [ $ranstat != "error" ]; then
    
     echo "Project Failed @ $timestamp Reason:ERROR-101 invaild method on line $foo inside the main class| ${catlines[$foo]}" >> ./catoponents/log.catd
+    echo "Run Status $ranstat" >> ./catoponents/log.catd
     echo -e "${colors[2]} ERROR-101! check logs"
     rm -r ./catoponents/runtime
     exit;
@@ -225,7 +242,6 @@ while [[ $foo != $acvlines ]]; do
   fi
   fi
   runstat=null
-  echo ${catlines[$foo]}
 done
 #end code
 if [[ $debug == "true" ]]; then

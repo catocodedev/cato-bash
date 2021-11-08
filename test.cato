@@ -1,13 +1,7 @@
 @import {test}
 @kit {e,"mmm e text"}
-@kit {meow,"M E O W ! C A T"}
-@kitten <test>{
-   
-   test#
-   console.write"test2"
-}
 @kitten <main> | |{
-   console.printkit<e>
-   kitten$<test>
-   console.printkit<meow>
+kit.readset<e>
+console.write | "Your input was" |
+console.printkit<meow>
 };
