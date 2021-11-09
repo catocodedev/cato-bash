@@ -31,7 +31,7 @@ colors+=("\e[0;32m"); #5 or purple
 colors+=("\e[0;34m"); #6 or blue
 declare -i color
 color=$"1"
-version=$"Dev0.1.3"
+version=$"Dev0.1.4"
 sed -i "s/^Version:.*/Version: $version/" ./catoponents/project.catofig
 CONPON=./catoponents/catoponents.catofig
 PROG=./catoponents/project.catofig
@@ -132,7 +132,7 @@ ranstat=none
     for (( i=0; i<$len; i++ ));
     do
     len=`expr ${#catoponents[@]}`
-    tmp="./catoponents/catos/${catoponents[$i]}.catop"
+    tmp="./catoponents/catos/${catoponents[$i]}/${catoponents[$i]}.catop"
     if [ -f $tmp ]; then
     echo "${catoponents[$i]} imported!" >> ./catoponents/log.catd
     else
@@ -148,7 +148,7 @@ while [[ $foo != $acvlines ]]; do
     len=${#catoponents[@]}
     for (( i=0; i<$len; i++ ));
     do
-        source "./catoponents/catos/${catoponents[$i]}.catop"
+        source "./catoponents/catos/${catoponents[$i]}/${catoponents[$i]}.catop"
     done
   if [[ ${catlines[$foo]} == *"%"* || ${catlines[$foo]} == "" || ${catlines[$foo]} == "}" ]]; then
     echo "Commented line / blank line" >> ./catoponents/runtime/debuglog.catd
