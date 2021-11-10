@@ -1,9 +1,7 @@
 #!/bin/bash
 filename="$1"
 option1="$2"
-if [[ $filename == "" ]]; then
-  read filename
-fi
+version=$"Dev0.1.6"
 if [[ $option1 == "-debug" ]]; then
   debug=$"true"
 else
@@ -11,8 +9,14 @@ else
 fi
 if [[ $option1 == "-min" ]]; then
   mode=$"min"
+elif [[ $option1 == "-v" ]]; then
+  echo $version
+  exit;
 else
   mode=$"reg"
+fi
+if [[ $filename == "" ]]; then
+  read filename
 fi
 declare -a lines
 declare -a colors
@@ -40,7 +44,6 @@ functions+=("kit.set$");
 functions+=("log.write");
 functions+=("kit.readset");
 functions+=("kitten$");
-version=$"Dev0.1.5"
 sed -i "s/^Version:.*/Version: $version/" ./catoponents/project.catofig
 CONPON=./catoponents/catoponents.catofig
 PROG=./catoponents/project.catofig
