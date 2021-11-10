@@ -20,6 +20,7 @@ declare -a catoponents
 declare -a catos
 declare -a kitname
 declare -a kitdata
+declare -a functions
 # add colors!
 syscolor=$"\e[1;36m"
 colors+=("\e[0m"); #1 or default
@@ -31,7 +32,15 @@ colors+=("\e[0;32m"); #5 or purple
 colors+=("\e[0;34m"); #6 or blue
 declare -i color
 color=$"1"
-version=$"Dev0.1.4"
+# add funcs
+functions+=("console.write");
+functions+=("console.printkit");
+functions+=("if");
+functions+=("kit.set$");
+functions+=("log.write");
+functions+=("kit.readset");
+functions+=("kitten$");
+version=$"Dev0.1.5"
 sed -i "s/^Version:.*/Version: $version/" ./catoponents/project.catofig
 CONPON=./catoponents/catoponents.catofig
 PROG=./catoponents/project.catofig
@@ -83,7 +92,20 @@ if test -f "$filename"; then
       fi
       if [[ ${lines[$foo]} == *"@import"* ]]; then
       import=`grep -oP '(?<={).*?(?=})' <<< "${lines[$foo]}"`
+      if [[ -f "./catoponents/catos/$import/funcs.catofig" && -f "./catoponents/catos/$import/pkg.catofig" ]]; then
+      while IFS= read -r line
+    do
+      functions+=("$line");
+    done < "./catoponents/catos/$import/funcs.catofig";
+    functions+=("$line");
       catoponents+=("$import");
+      else
+    echo -e "${colors[2]}ERROR 208! check logs"
+    timestamp=`date`
+    echo "Project Failed @ $timestamp Reason:ERROR-208 import $import failed all data wasn't found" >> ./catoponents/log.catd
+    rm -r ./catoponents/runtime
+    exit;    
+      fi
       fi
       if [[ ${lines[$foo]} == *"@kit"* ]]; then
       name=`grep -oP '(?<={).*?(?=,)' <<< "${lines[$foo]}"`

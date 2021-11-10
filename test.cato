@@ -1,11 +1,10 @@
 @import {test}
 @kit {e,"mmm e text"}
 @kitten <main> | |{
+console.write | "Want a meow? Y/N" |
 kit.readset<e>
-console.write | "Your input was" |
-console.printkit<meow>
-if( <e> = "test" )[
-console.write | "if was true" |
+if( <e> = "Y" )[
+
+console.write "meow"
 ]
-test#
 }
