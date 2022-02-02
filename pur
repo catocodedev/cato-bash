@@ -1,0 +1,93 @@
+#!/bin/bash
+option="$1"
+input="$2"
+extra="$3"
+etc="$4"
+version="Pur 0.1.2"
+timestamp=`date`
+if [[ $option == "ver" ]]; then
+    echo "$version"
+    exit;
+fi
+
+if [[ $option == "init" ]]; then
+    mkdir catoponents
+    mkdir ./catoponents/catos
+    mainkit="main"
+    if [[ $etc != "" ]]; then
+        mainkit=$etc
+    fi
+    echo "$version" >> ./catoponents/catoponents.catofig
+    echo "project inited using $version" >> ./catoponents/log.catd
+    echo "project inited @ $timestamp" >> ./catoponents/log.catd
+    echo "Name:$input" >> ./catoponents/project.catofig
+    echo "Version:$extra" >> ./catoponents/project.catofig
+    echo "MainKit:$mainkit>" >> ./catoponents/project.catofig
+    echo "Creation Time: $timestamp" >> ./catoponents/project.catofig
+    echo "Project ready!"
+elif [[ $option == "get" ]]; then
+grab="https://pkg.cato.fun/pkgs/$input/data/$input.catop"
+mkdir ./catoponents/catos/$input
+echo "Downloading $input ..."
+if curl $grab --fail --silent --output ./catoponents/catos/$input/$input.catop; then
+    curl https://pkg.cato.fun/pkgs/$input/data/pkg.catofig --fail --silent --output ./catoponents/catos/$input/pkg.catofig
+    curl https://pkg.cato.fun/pkgs/$input/data/funcs.catofig --fail --silent --output ./catoponents/catos/$input/funcs.catofig
+    echo "$input" >> ./catoponents/catoponents.catofig
+    echo "$input installed"
+    exit;
+ else
+  echo "Catopoent $input not found"
+  rm -r ./catoponents/catos/$input
+fi
+elif [[ $option == "clearlog" ]]; then
+    rm ./catoponents/log.catd
+    echo "Log Cleared @ $timestamp" >> ./catoponents/log.catd
+elif [[ $option == "remove" ]]; then
+    echo "Removing $input ..."
+    rm -r ./catoponents/catos/$input
+    sed -i "s/^$input*//" ./catoponents/catoponents.catofig
+    echo "$input removed"
+    exit;
+elif [[ $option == "" ]]; then
+    echo "use pur help to see options"
+elif [[ $option == "change.name" ]]; then
+    sed -i "s/^Name:.*/Name: $input/" ./catoponents/project.catofig
+    echo "Project name changed!"
+    exit;
+elif [[ $option == "progget" ]]; then
+while IFS= read -r line
+    do
+      catoponents+=("$line");
+    done < "./catoponents/catoponents.catofig";
+    catoponents+=("$line");
+    unset catoponents[0]
+    len=${#catoponents[@]}
+    for (( i=0; i<$len; i++ )); do
+    grab="https://pkg.cato.fun/pkgs/${catoponents[i]}/data/${catoponents[i]}.catop"
+    echo "Downloading ${catoponents[i]} ..."
+    mkdir ./catoponents/catos/${catoponents[i]}
+    if curl $grab --fail --silent --output ./catoponents/catos/${catoponents[i]}.catop; then
+    curl https://pkg.cato.fun/pkgs/${catoponents[i]}/data/pkg.catofig --fail --silent --output ./catoponents/catos/${catoponents[i]}/pkg.catofig
+    curl https://pkg.cato.fun/pkgs/${catoponents[i]}/data/funcs.catofig --fail --silent --output ./catoponents/catos/${catoponents[i]}/funcs.catofig
+    fi
+    done
+exit;
+elif [[ $option == "help" ]]; then
+    echo "pur ver *shows the version of pur"
+    echo "pur help *shows this"
+    echo "pur clearlog *resets the log"
+    echo "pur get <package> *installs catoponet"
+    echo "pur remove <package> *removes catoponet"
+    echo "pur init <name> <version> *setup cato project **Do before getting catoponents"
+    echo "pur change.name <name> *changes project name"
+elif [[ $option == "purge" ]]; then
+echo "Purging runtime . . ."
+rm -r ./catoponents/runtime
+echo "Purging logs"
+   rm ./catoponents/log.catd
+echo "Log Cleared @ $timestamp" >> ./catoponents/log.catd
+echo "done"
+else
+    echo "invaild option"
+fi
+    exit;
